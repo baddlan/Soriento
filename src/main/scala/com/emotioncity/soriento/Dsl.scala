@@ -7,6 +7,7 @@ import com.orientechnologies.orient.core.record.impl.ODocument
 
 import scala.collection.JavaConverters._
 
+import play.api.libs.json.JsObject
 
 /**
   * Created by stream on 31.10.14.
@@ -29,7 +30,11 @@ trait Dsl {
           p match {
             case Some(v) =>
               if (ReflectionUtils.isCaseClass(ReflectionUtils.getTypeForClass(v.getClass))) {
-                productToDocument(v.asInstanceOf[Product])
+                if (v.isInstanceOf[play.api.libs.json.JsObject]) {
+                  GenericJsonFormats.JsObjectToMap(v.asInstanceOf[JsObject])
+                } else {
+                  productToDocument(v.asInstanceOf[Product])
+                }
               } else {
                 v
               }
